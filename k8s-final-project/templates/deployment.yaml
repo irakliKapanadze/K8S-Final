@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name}}
+  labels:
+    {{- toYaml .Values.labels | nindent 4 }}
+  namespace: {{ if .Values.namespace.create }}{{ .Values.namespace.name }}{{ end }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  selector:
+    matchLabels:
+      {{- toYaml .Values.selectorLabels | nindent 8 }}
+  template:
+    metadata:
+      labels:
+        {{- toYaml .Values.labels | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Values.deployment.name }}-container
+        image: {{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}
+        ports:
+        - containerPort: {{ .Values.service.containerPort }}
+        volumeMounts:
+          - name: nginx-index-file
+            mountPath: /usr/share/nginx/html/
+      volumes: 
+      - name: nginx-index-file
+        configMap:
+          name: {{.Values.configmap.name}}
+      serviceAccountName: {{.Values.serviceaccount.name}}
+
+

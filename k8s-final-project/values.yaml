@@ -1,0 +1,44 @@
+
+namespace:
+  create: true           
+  name: ikapanadze
+
+labels:
+  app: k8s-final-project
+
+selectorLabels:
+  app: k8s-final-project
+
+deployment:
+  name: web-server-ikapanadze-deployment
+  replicaCount: 2
+  image:
+    repository: nginx
+    tag: latest
+  
+service:
+  name: ikapanadze-service
+  type: ClusterIP
+  port: 80
+  containerPort: 80
+  
+virtualservice:
+  name: ikapanadze-virtual-service
+  host: ikapanadze.com
+  gateway: istio-system/istio-ingress
+
+configmap:
+  name: ikapanadze-config-map
+  html: |
+    <html>
+    <body>
+    <h1>Kubernetes Final Project!</h1>
+    <p>ikapanadze test page served by NGINX in Kubernetes.</p>
+    </body>
+    </html>
+
+serviceaccount:
+  name: ikapanadze-service-account
+
+role:
+  name: ikapanadze-role
